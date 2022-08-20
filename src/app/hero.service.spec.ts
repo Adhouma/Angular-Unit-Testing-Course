@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from "@angular/common/
 
 import { MessageService } from "./message.service";
 import { HeroService } from "./hero.service";
+import { Hero } from "./hero";
 
 describe('HeroService Integration test', () => {
 
@@ -33,15 +34,24 @@ describe('HeroService Integration test', () => {
     it('should return Hero when getHero() is called', () => {
         // Given
         const heroId = 3;
-        heroService.getHero(heroId).subscribe();
-
+        const expectedHero: Hero = { id: 3, name: 'BatMan', strength: 30 };
         const url = 'api/heroes';
-        const request = httpTestingController.expectOne(url + '/' + 3); // Get expected URL
 
         // When
-        request.flush({ id: 3, name: 'BatMan', strength: 30 }); // Get expected result heroService.getHero(heroId).subscribe();
+        // Make an HTTP GET request
+        heroService.getHero(heroId).subscribe();
 
         // Then
+        // The following `expectOne()` will match the request's URL.
+        const request = httpTestingController.expectOne(url + '/' + 3); // Get expected URL
+
+        // Asserts that correct data was returned from heroService.getHero(heroId).subscribe();
+        request.flush(expectedHero);
+
+        // Assert that the request is a GET.
+        expect(request.request.method).toEqual('GET');
+
+        // Finally, assert that there are no outstanding requests.      
         httpTestingController.verify();
     });
 })
