@@ -56,4 +56,28 @@ describe('HeroesComponent Deep test', () => {
         expect(heroComponentList[1].componentInstance.hero.strength).toEqual(808);
         expect(heroComponentList[2].componentInstance.hero.id).toEqual(3);
     })
+
+    it("should call heroService.deleteHero when the Hero's component delete button is clicked", () => {
+        // Given
+        mockHeroService.getHeroes.and.returnValue(of(mockHeroes));
+        spyOn(fixture.componentInstance, 'delete'); // Find the delete method on the Heros component and watch if it invoked
+
+        // When
+        fixture.detectChanges();
+
+        const heroComponentList = fixture.debugElement.queryAll(By.directive(HeroComponent)); // Select all Hero <app-hero>
+
+        // Trigger the delete event (delete) on the Hero <app-hero (delete)="delete(hero)"> component (Recommended)
+        (<HeroComponent>heroComponentList[0].componentInstance).delete.emit();
+
+        // Alternative 1 
+        // heroComponentList[0].triggerEventHandler('delete', null); // Trigger the delete event no matter if exist or not
+
+        // Alternative 2 (least preferable)
+        // heroComponentList[0].query(By.css('button'))
+        //     .triggerEventHandler('click', {stopPropagation: () => {}}) // Trigger the delete event by click on the Hero delete button manually
+
+        // Then
+        expect(fixture.componentInstance.delete).toHaveBeenCalledWith(mockHeroes[0]);
+    });
 });
