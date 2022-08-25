@@ -80,4 +80,29 @@ describe('HeroesComponent Deep test', () => {
         // Then
         expect(fixture.componentInstance.delete).toHaveBeenCalledWith(mockHeroes[0]);
     });
+
+    it('should add new Hero to the heroes list when the add button is clicked', () => {
+        // Given
+        mockHeroService.getHeroes.and.returnValue(of(mockHeroes));
+        fixture.detectChanges();
+
+        const newHeroName = 'Wolverine';
+        const inputTextElement = fixture.debugElement.query(By.css('input')).nativeElement; // Get the inputText elemet
+        const addButton = fixture.debugElement.query(By.css('button')); // Get the button element
+
+        mockHeroService.addHero.and.returnValue(of({ id: 4, name: newHeroName, strength: 50 }));
+
+        // When
+        (<HTMLInputElement>inputTextElement).value = newHeroName; // inputText value = heroName
+        addButton.triggerEventHandler('click', null); // Click the add button
+
+        fixture.detectChanges();
+
+        // Then
+        const heroComponentList = fixture.debugElement.queryAll(By.directive(HeroComponent));
+
+        expect((<Hero>heroComponentList[3].componentInstance.hero).id).toEqual(4);
+        expect((<Hero>heroComponentList[3].componentInstance.hero).name).toEqual(newHeroName);
+        expect((<Hero>heroComponentList[3].componentInstance.hero).strength).toEqual(50);
+    });
 });
