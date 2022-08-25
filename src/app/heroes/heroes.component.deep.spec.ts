@@ -105,4 +105,19 @@ describe('HeroesComponent Deep test', () => {
         expect((<Hero>heroComponentList[3].componentInstance.hero).name).toEqual(newHeroName);
         expect((<Hero>heroComponentList[3].componentInstance.hero).strength).toEqual(50);
     });
+
+    it('should have the correct route for the first hero', () => {
+        // Given
+        mockHeroService.getHeroes.and.returnValue(of(mockHeroes));
+        fixture.detectChanges();
+        
+        const heroComponentList = fixture.debugElement.queryAll(By.directive(HeroComponent)); // Get all HeroComponent
+        const routerLinkHref = heroComponentList[0].query(By.css('a')).nativeElement.getAttribute('href'); // Get <a href> within HeroComponent
+        
+        // When
+        fixture.detectChanges();
+
+        // Then
+        expect(routerLinkHref).toEqual('/detail/1');
+    });
 });
