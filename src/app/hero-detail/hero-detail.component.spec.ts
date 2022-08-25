@@ -1,5 +1,5 @@
 import { Location } from "@angular/common";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 
@@ -54,4 +54,17 @@ describe('HeroDetailComponent', () => {
         // Then
         expect((<HTMLElement>fixture.nativeElement).querySelector('h2').textContent).toContain(hero.name.toUpperCase());
     });
+
+    it('should call updateHero when save is called', fakeAsync(() => {
+        // Given
+        mockHeroSerice.updateHero.and.returnValue(of({}))
+
+        // When
+        fixture.componentInstance.save();
+        flush(); // Alternative 1 Simulates the asynchronous passage of time until 0 milliseconds (Recommended)
+        // tick(250); // Alternative 2 Simulates the asynchronous passage of time for 250 milliseconds
+
+        // Then
+        expect(mockHeroSerice.updateHero).toHaveBeenCalled();
+    }));
 });
